@@ -118,7 +118,8 @@ local function get_the_property_names(node)
             return nil
         end
 
-        known_prop_names[#known_prop_names + 1] = vim.treesitter.get_node_text(child_node, 0)
+        table.insert(known_prop_names, vim.treesitter.get_node_text(child_node, 0))
+        -- known_prop_names[#known_prop_names + 1] = vim.treesitter.get_node_text(child_node, 0)
         last_property_node = child_node
     end
 
@@ -176,7 +177,8 @@ local function get_typed_property_names(node)
             if child_node:type() == "property_signature" then
                 for _, child_child_node in ipairs(child_node:named_children()) do
                     if child_child_node:type() == "property_identifier" then
-                        props_in_type[#props_in_type + 1] = vim.treesitter.get_node_text(child_child_node, 0)
+                        table.insert(props_in_type, vim.treesitter.get_node_text(child_child_node, 0))
+                        -- props_in_type[#props_in_type + 1] = vim.treesitter.get_node_text(child_child_node, 0)
                         break
                     end
                 end

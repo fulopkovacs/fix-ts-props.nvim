@@ -1,44 +1,4 @@
-print("hi")
-
-function PrintCurrentTSNode()
-    -- Get the current buffer
-    local bufnr = vim.api.nvim_get_current_buf()
-
-    -- Get cursor position (row, col)
-    local cursor = vim.api.nvim_win_get_cursor(0)
-    local row = cursor[1] - 1 -- Convert to 0-based index
-    local col = cursor[2]
-
-    -- Get parser and tree root
-    local parser = vim.treesitter.get_parser(bufnr)
-    if parser == nil then
-        print("X Parser is nil")
-        return nil
-    end
-    local tree = parser:parse()[1]
-    local root = tree:root()
-
-    -- Get node at cursor
-    local node = vim.treesitter.get_node({
-        row, col,
-    })
-
-    if node then
-        -- Get the text of the node
-        local nodeText = vim.treesitter.get_node_text(node, 0)
-        local nodeInfo = "Node type:        " .. node:type() .. " | Node text: \"" .. nodeText .. "\""
-        -- Get the parent of the node
-        local parent = node:parent()
-        if parent then
-            local parentInfo = "Parent node type: " .. parent:type() .. " | Parent node text: \"" .. vim.treesitter.get_node_text(parent, 0) .. "\""
-            print(nodeInfo .. "\n" .. parentInfo)
-        else
-            print(nodeInfo)
-        end
-    else
-        print("No treesitter node found at cursor position")
-    end
-end
+local M = {} -- M stands for module, a naming convention
 
 local function get_current_node()
     -- Get the current buffer
@@ -52,7 +12,7 @@ local function get_current_node()
     -- Get parser and tree root
     local parser = vim.treesitter.get_parser(bufnr)
     if parser == nil then
-        print("X Parser is nil")
+        -- print("X Parser is nil")
         return nil
     end
     local tree = parser:parse()[1]
@@ -73,8 +33,6 @@ end
 ---@param node TSNode TreeSitter node
 ---@return TSNode|nil The parameters node or nil if not found
 local function get_param_node(node)
-    local type = node:type()
-    print(type)
     if node:type() ~= "required_parameter" then
         local parent = node:parent()
         if parent then
@@ -84,7 +42,7 @@ local function get_param_node(node)
         end
     end
 
-    print(node:type())
+    -- print(node:type())
     return node
 end
 
@@ -114,7 +72,7 @@ local function get_the_property_names(node)
     for _, child_node in ipairs(node:named_children()) do
         if child_node:type() ~= "shorthand_property_identifier_pattern" then
             -- Probably a rest pattern_node
-            print("Unexpexted node type was found: " .. child_node:type())
+            -- print("Unexpexted node type was found: " .. child_node:type())
             return nil
         end
 
@@ -162,7 +120,7 @@ end
 ---@return string[] |nil # A list of the names that are in the type definition
 local function get_typed_property_names(node)
     if node:named_child_count() == 0 then
-        print("No named children")
+        -- print("No named children")
         return nil
     end
 
@@ -237,23 +195,20 @@ local function insert_missing_prop_names(missing_props, initial_comma, insert_po
     })
 end
 
-function Main()
-    -- TODO: Find all missing props
-    -- Walk up the trees until you find an `object_type` which has a `type_annotation` parent
+M.fix_missing_ts_props = function()
     local current_node = get_current_node()
     if current_node == nil then
-        print("current_node is nil")
+        -- print("current_node is nil")
         return nil
     end
     local param_node = get_param_node(current_node)
     if param_node == nil then
-        print("param node is nil")
+        -- print("param node is nil")
         return nil
     end
-    -- local first_named_child = get_first_child_type(param_node)
     local propsAndTypeNodes = get_props_and_type_nodes(param_node)
     if (propsAndTypeNodes == nil) then
-        print("props and type nodes are not found")
+        -- print("props and type nodes are not found")
         return nil
     end
     local property_names_and_last_node = get_the_property_names(propsAndTypeNodes.object_pattern_node)
@@ -266,20 +221,8 @@ function Main()
 
 end
 
--- vim.api.nvim_create_user_command("TSNodeType", PrintCurrentTSNode, {})
-vim.keymap.set({
-    "n", "i",
-}, "<leader>ts", PrintCurrentTSNode, {
-    noremap = true,
-})
+-- function M.setup()
+--     print("hello")
+-- end
 
-vim.keymap.set({"n"}, "<leader>ll", function()
-    print("⏳︎ Reloading nvim-props.lua")
-    vim.cmd [[luafile nvim-props.lua]]
-    print("✅ Reloaded nvim-props.lua")
-    -- PrintCurrentTSNode()
-    Main()
-end, {
-    noremap = true,
-})
-
+return M

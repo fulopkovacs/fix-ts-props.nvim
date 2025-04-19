@@ -196,6 +196,13 @@ local function insert_missing_prop_names(missing_props, initial_comma, insert_po
 end
 
 M.fix_missing_ts_props = function()
+    -- Don't do anything in non-ts files
+    local filetype = vim.bo.filetype
+    if filetype ~= "typescript" and filetype ~= "typescriptreact" then
+        print("Filetype must be \"typescript\" or \"typescriptreact\"")
+        return nil
+    end
+
     local nothing_to_do_msg = "no missing ts props were found"
     local current_node = get_current_node()
     if current_node == nil then

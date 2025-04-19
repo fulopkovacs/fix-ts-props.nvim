@@ -1,51 +1,66 @@
-# Nvim props
+# fix-ts-props.nvim
 
-## notes
+A Neovim plugin that automatically fixes missing TypeScript props in React
+components.
 
-- patterns:
+## Features
 
-```
-parameters > pattern
-           > type
-```
+- Automatically adds missing props from TypeScript interfaces to component
+  destructuring patterns
+- Supports React functional components
+- Uses Treesitter for accurate TypeScript parsing
 
-- DO not add missing prop names:
-  - if the `rest` pattern is present
+## Requirements
 
-### NO missing prop names:
+- Neovim >= 0.5.0
+- Treesitter with TypeScript parser installed
 
-```ts
-function hi({...props}: {prop1: string; prop2: boolean}) {
-  return null
-}
+## Installation
 
-function hi2(person: {name: string; age: number}) {
-  return null
-}
-```
+Using [lazy.nvim](https://github.com/folke/lazy.nvim):
 
-### DO add missing props:
-```ts
-function hi_again({name, age} : {name: string, age: number}) {
-  return null
+```lua
+{
+    'fulopkovacs/fix-ts-props.nvim',
+    ft = { 'typescript', 'typescriptreact' }
 }
 ```
 
-## What should it do?
+## Usage
 
-- should write the args from the type
-- should work when I edit too
+1. Place your cursor within a React component's props parameter
+2. Call the `fix_missing_ts_props` function:
 
-If I have a function
+```lua
+:lua require('fix-ts-props').fix_missing_ts_props()
+```
 
-```tsx
-function HelloPerson({name, age}: {name: string; age: number}) {
-  return (
-    <div>
-      hello {name}! You are {age} years old.
-    </div>
-  )
+### Recommended Configuration
+
+Add this to your Neovim configuration:
+
+```lua
+vim.keymap.set('n', '<Leader>fp', require('fix-ts-props').fix_missing_ts_props, { desc = 'Fix TypeScript Props' })
+```
+
+## Examples
+
+Before:
+
+```typescript
+function Component({name}: {name: string; age: number}) {
+  return <div>{name}</div>
 }
 ```
 
-When I write `{` as an argument of a function, it should be autocompleted
+After:
+
+```typescript
+function Component({name, age}: {name: string; age: number}) {
+  return <div>{name}</div>
+}
+```
+
+## License
+
+MIT

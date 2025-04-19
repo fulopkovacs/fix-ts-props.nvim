@@ -1,0 +1,56 @@
+*fix-ts-props.txt*  Automatically fix missing TypeScript props
+
+==============================================================================
+CONTENTS                                                *fix-ts-props-contents*
+
+    1. Introduction ................ |fix-ts-props-introduction|
+    2. Requirements ................ |fix-ts-props-requirements|
+    3. Installation ................ |fix-ts-props-installation|
+    4. Usage ...................... |fix-ts-props-usage|
+    5. Configuration .............. |fix-ts-props-configuration|
+
+==============================================================================
+1. INTRODUCTION                                     *fix-ts-props-introduction*
+
+fix-ts-props is a Neovim plugin that helps you automatically add missing
+TypeScript props in React components by analyzing the component usage and its
+type definitions.
+
+==============================================================================
+2. REQUIREMENTS                                     *fix-ts-props-requirements*
+
+- Neovim >= 0.5.0
+- Treesitter with TypeScript parser installed
+
+==============================================================================
+3. INSTALLATION                                     *fix-ts-props-installation*
+
+- Using lazy.nvim:
+
+>lua
+        {
+            'fulopkovacs/fix-ts-props.nvim',
+            ft = { 'typescript', 'typescriptreact' }
+        }
+<
+
+
+==============================================================================
+4. USAGE                                                  *fix-ts-props-usage*
+
+Place your cursor within a React component's props parameter and call:
+>vim
+    :lua require('fix-ts-props').fix_missing_ts_props()
+<
+
+==============================================================================
+5. CONFIGURATION                                  *fix-ts-props-configuration*
+
+Recommended key mapping:
+>lua
+    vim.keymap.set('n', '<Leader>fp', 
+        require('fix-ts-props').fix_missing_ts_props, 
+        { desc = 'Fix TypeScript Props' })
+<
+
+vim:tw=78:ts=8:ft=help:norl:

@@ -196,24 +196,29 @@ local function insert_missing_prop_names(missing_props, initial_comma, insert_po
 end
 
 M.fix_missing_ts_props = function()
+    local nothing_to_do_msg = "no missing ts props were found"
     local current_node = get_current_node()
     if current_node == nil then
         -- print("current_node is nil")
+        print(nothing_to_do_msg)
         return nil
     end
     local param_node = get_param_node(current_node)
     if param_node == nil then
         -- print("param node is nil")
+        print(nothing_to_do_msg)
         return nil
     end
     local propsAndTypeNodes = get_props_and_type_nodes(param_node)
     if (propsAndTypeNodes == nil) then
         -- print("props and type nodes are not found")
+        print(nothing_to_do_msg)
         return nil
     end
     local property_names_and_last_node = get_the_property_names(propsAndTypeNodes.object_pattern_node)
     local typed_property_names = get_typed_property_names(propsAndTypeNodes.object_type_node)
     if (property_names_and_last_node == nil or typed_property_names == nil) then
+        print(nothing_to_do_msg)
         return nil
     end
     local missing_props = get_list_of_missing_prop_names(property_names_and_last_node.property_names, typed_property_names)

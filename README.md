@@ -1,5 +1,7 @@
 # fix-ts-props.nvim
 
+> **This plugin is a work in progress!** I don't recommend using it... ^^
+
 A Neovim plugin that automatically fixes missing TypeScript props in React
 components.
 

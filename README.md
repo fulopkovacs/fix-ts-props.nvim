@@ -5,6 +5,37 @@
 A Neovim plugin that automatically fixes missing TypeScript props in React
 components.
 
+## TODO
+
+- [ ] keep formatting
+
+  ```ts
+  // original with missing prop
+  function f({
+    a,
+    b, // now `c` comes here
+  }: {
+    a: string
+    b: string
+    c: string
+  }) {
+    return b
+  }
+
+  // with the missing prop
+  function f({
+    a,
+    b,
+    c, // <-- `c` should come here
+  }: {
+    a: string
+    b: string
+    c: string
+  }) {
+    return b
+  }
+  ```
+
 ## Features
 
 - Automatically adds missing props from TypeScript interfaces to component
